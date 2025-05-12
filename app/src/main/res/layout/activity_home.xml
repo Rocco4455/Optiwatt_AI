@@ -72,9 +72,9 @@
 
             <View
                 android:id="@+id/IconSotto"
-                android:layout_width="350dp"
-                android:layout_height="201dp"
-                android:layout_marginTop="30dp"
+                android:layout_width="349dp"
+                android:layout_height="187dp"
+                android:layout_marginTop="28dp"
                 android:background="@drawable/stilecircolare"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -226,8 +226,8 @@
                 style="@style/NunitoBoldText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="125dp"
-                android:layout_marginTop="40dp"
+                android:layout_marginStart="110dp"
+                android:layout_marginTop="35dp"
                 android:text="All Tips"
                 android:textSize="28sp"
                 app:layout_constraintStart_toStartOf="@+id/IconSotto"
@@ -235,14 +235,25 @@
 
             <ImageView
                 android:id="@+id/imageView"
-                android:layout_width="128dp"
-                android:layout_height="137dp"
+                android:layout_width="107dp"
+                android:layout_height="106dp"
                 android:layout_marginTop="10dp"
                 app:layout_constraintBottom_toBottomOf="@+id/IconSotto"
                 app:layout_constraintStart_toStartOf="@+id/IconSotto"
                 app:layout_constraintTop_toTopOf="@+id/IconSotto"
-                app:layout_constraintVertical_bias="0.29"
+                app:layout_constraintVertical_bias="0.422"
                 app:srcCompat="@drawable/lampadina" />
+
+            <TextView
+                android:id="@+id/textTips2"
+                style="@style/NunitoBoldText"
+                android:layout_width="223dp"
+                android:layout_height="80dp"
+                android:layout_marginStart="110dp"
+                android:layout_marginTop="78dp"
+                android:text="Tips generale"
+                app:layout_constraintStart_toStartOf="@+id/imageView"
+                app:layout_constraintTop_toTopOf="@+id/IconSotto" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
