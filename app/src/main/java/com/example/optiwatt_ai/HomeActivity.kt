@@ -3,6 +3,7 @@ package com.example.optiwatt_ai
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.ImageView
 import android.widget.PopupMenu
 import android.widget.TextView
@@ -71,6 +72,12 @@ class HomeActivity : AppCompatActivity() {
             }
 
             popup.show()
+        }
+
+        val iconSotto = findViewById<View>(R.id.IconSotto)
+        iconSotto.setOnClickListener {
+            val intent = Intent(this, TipsActivity::class.java)
+            startActivity(intent)
         }
 
         val consumoTextView = findViewById<TextView>(R.id.textConsumptionR)
