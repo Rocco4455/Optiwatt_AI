@@ -221,6 +221,18 @@
                 app:layout_constraintEnd_toEndOf="@+id/ringChart"
                 app:layout_constraintStart_toStartOf="@+id/ringChart" />
 
+            <TextView
+                android:id="@+id/textTips"
+                style="@style/NunitoBoldText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="120dp"
+                android:layout_marginTop="48dp"
+                android:text="All Tips"
+                android:textSize="28sp"
+                app:layout_constraintStart_toStartOf="@+id/IconSotto"
+                app:layout_constraintTop_toTopOf="@+id/IconSotto" />
+
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
