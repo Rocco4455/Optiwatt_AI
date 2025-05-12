@@ -11,6 +11,13 @@ interface BollettaDao {
 
     @Query("SELECT * FROM Bolletta ORDER BY id DESC")
     suspend fun prendiTutte(): List<Bolletta>
+
+    @Query("SELECT consumoTotale, costoTotale, emissioniCO2 FROM Bolletta WHERE id = :id")
+    suspend fun prendiDatiEssenziali(id: Int): DatiBolletta
+
+    @Query("SELECT consumoTotale, costoTotale, emissioniCO2 FROM Bolletta ORDER BY id DESC LIMIT 1")
+    suspend fun prendiUltimiDatiEssenziali(): DatiBolletta
+
 }
 // DADDA: tutte le query che l’intelligenza artificiale dovrà fare al database vanno scritte QUI.
 // Se devi filtrare bollette per costo, consumo, fornitore, periodo, ecc. scrivilo usando @Query
