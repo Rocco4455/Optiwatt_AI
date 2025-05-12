@@ -14,7 +14,6 @@ class OptiwattApp : Application() {
 
         Log.d("OptiwattApp", "Database Room inizializzato: ${db.openHelper.databaseName}")
 
-        // Usiamo una coroutine per accedere a funzioni suspend del DAO
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val dao = db.bollettaDao()

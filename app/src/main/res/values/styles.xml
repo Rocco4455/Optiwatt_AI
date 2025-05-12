@@ -14,6 +14,12 @@
         <item name="android:textStyle">bold</item>
     </style>
 
+    <style name="PopupMenu" parent="Widget.AppCompat.PopupMenu">
+        <item name="android:popupBackground">@drawable/menu_sfondo</item>
+        <item name="android:textAppearance">@style/NunitoBoldText</item>
+    </style>
+
+
 </resources>
 
 

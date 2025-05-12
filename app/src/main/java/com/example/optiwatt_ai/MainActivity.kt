@@ -22,8 +22,8 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        val getStartedButton = findViewById<Button>(R.id.getStartedButton)
-        getStartedButton.setOnClickListener {
+        val startButton = findViewById<Button>(R.id.getStartedButton)
+        startButton.setOnClickListener {
             val intent = Intent(this, ProviderActivity::class.java)
             startActivity(intent)
         }

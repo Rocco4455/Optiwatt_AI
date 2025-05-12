@@ -1,4 +1,3 @@
-// HomeActivity.kt
 package com.example.optiwatt_ai
 
 import android.content.Intent
