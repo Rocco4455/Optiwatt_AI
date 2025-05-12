@@ -7,11 +7,12 @@
     tools:context=".INPUT_img"
     android:padding="24dp"
     android:background="#ededed">
+
     <ImageView
         android:id="@+id/Immagine"
         android:layout_width="wrap_content"
         android:layout_height="200dp"
-        android:layout_marginTop="300dp"
+        android:layout_marginTop="310dp"
         android:contentDescription="Icona upload"
         android:scaleType="centerInside"
         app:layout_constraintEnd_toEndOf="parent"
@@ -22,12 +23,12 @@
 
     <Button
         android:id="@+id/BottoneIndietro"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="220dp"
-        android:layout_marginTop="650dp"
+        android:layout_width="109dp"
+        android:layout_height="52dp"
+        android:layout_marginStart="212dp"
+        android:layout_marginTop="644dp"
         android:backgroundTint="#344F62"
-        android:text="invia"
+        android:text="Invia"
         app:iconTint="#344F62"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
