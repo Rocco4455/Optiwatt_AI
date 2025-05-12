@@ -23,18 +23,21 @@
 
     <Button
         android:id="@+id/BottoneIndietro"
-        android:layout_width="109dp"
-        android:layout_height="52dp"
-        android:layout_marginStart="212dp"
-        android:layout_marginTop="644dp"
+        style="@style/NunitoBoldText"
+        android:layout_width="130dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="192dp"
+        android:layout_marginTop="632dp"
         android:backgroundTint="#344F62"
-        android:text="Invia"
+        android:text="@string/invia"
         app:iconTint="#344F62"
+        android:textColor="@android:color/white"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/btnSelezionaImmagine"
+        style="@style/NunitoBoldText"
         android:layout_width="270dp"
         android:layout_height="70dp"
         android:layout_marginTop="550dp"
