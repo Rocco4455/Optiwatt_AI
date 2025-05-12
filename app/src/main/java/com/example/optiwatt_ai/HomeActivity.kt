@@ -21,6 +21,13 @@ data class DatiBolletta(
     val emissioniCO2: Double
 )
 
+suspend fun calcolaMediaConsumoUltime3(dao: BollettaDao): Double {
+    val ultimeBolle: List<Bolletta> = dao.prendiTutte().take(3)
+    if (ultimeBolle.isEmpty()) return 0.0
+    val somma = ultimeBolle.sumOf { it.consumoTotale }
+    return somma / ultimeBolle.size
+}
+
 class HomeActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,9 +41,6 @@ class HomeActivity : AppCompatActivity() {
         }
 
         val ringChart = findViewById<RingChartView>(R.id.ringChart)
-        ringChart.percent = 0.75f
-        ringChart.invalidate()
-
         val uploadButton = findViewById<ImageView>(R.id.UploadButton)
         uploadButton.setOnClickListener {
             val intent = Intent(this, INPUT_img::class.java)
@@ -69,19 +73,30 @@ class HomeActivity : AppCompatActivity() {
             popup.show()
         }
 
-        // Recupera e aggiorna i valori dalla bolletta più recente
         val consumoTextView = findViewById<TextView>(R.id.textConsumptionR)
         val costoTextView = findViewById<TextView>(R.id.textCostR)
         val co2TextView = findViewById<TextView>(R.id.textCO2R)
+        val consumoChartTextView = findViewById<TextView>(R.id.textInChartLeft)
 
         CoroutineScope(Dispatchers.IO).launch {
             val dao = AppDatabase.getInstance(applicationContext).bollettaDao()
             val dati = dao.prendiUltimiDatiEssenziali()
+            val mediaConsumo = calcolaMediaConsumoUltime3(dao)
+
+            val percentuale = if (mediaConsumo != 0.0) {
+                (dati.consumoTotale / mediaConsumo).coerceIn(0.0, 1.0).toFloat()
+            } else {
+                0f
+            }
 
             withContext(Dispatchers.Main) {
                 consumoTextView.text = "${dati.consumoTotale} kWh"
                 costoTextView.text = "${dati.costoTotale} €"
                 co2TextView.text = "${dati.emissioniCO2} kg CO₂"
+                consumoChartTextView.text = "$mediaConsumo"
+
+                ringChart.percent = percentuale
+                ringChart.invalidate()
             }
         }
     }
