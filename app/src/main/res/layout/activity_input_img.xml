@@ -6,49 +6,72 @@
     android:layout_height="match_parent"
     tools:context=".INPUT_img"
     android:padding="24dp"
-    android:background="#FFFFFF">
-
+    android:background="#ededed">
     <ImageView
         android:id="@+id/Immagine"
         android:layout_width="wrap_content"
         android:layout_height="200dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="100dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginTop="300dp"
         android:contentDescription="Icona upload"
         android:scaleType="centerInside"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/uploadicon" />
 
     <Button
-        android:id="@+id/btnSelezionaImmagine"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="100dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="100dp"
-        android:backgroundTint="#86B1A4"
-        android:text="Carica immagine"
-        android:textAllCaps="false"
-        android:textColor="@android:color/white"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/Immagine" />
-
-    <Button
         android:id="@+id/BottoneIndietro"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="136dp"
-        android:layout_marginTop="392dp"
+        android:layout_marginStart="220dp"
+        android:layout_marginTop="650dp"
         android:backgroundTint="#344F62"
         android:text="invia"
         app:iconTint="#344F62"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btnSelezionaImmagine"
+        android:layout_width="270dp"
+        android:layout_height="70dp"
+        android:layout_marginTop="550dp"
+        android:backgroundTint="#86B1A4"
+        android:text="Carica immagine"
+        android:textAllCaps="false"
+        android:textColor="@android:color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.495"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textInput"
+        style="@style/NunitoBoldText"
+        android:layout_width="325dp"
+        android:layout_height="177dp"
+        android:layout_marginTop="15dp"
+        android:text="@string/input"
+        android:textColor="#344F62"
+        android:textSize="40sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.44"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textInput2"
+        style="@style/NunitoBoldText"
+        android:layout_width="325dp"
+        android:layout_height="55dp"
+        android:layout_marginTop="10dp"
+        android:text="@string/input2"
+        android:textColor="#6E7A87"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textInput" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

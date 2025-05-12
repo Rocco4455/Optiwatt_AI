@@ -4,11 +4,15 @@
         <string name="menu_button_desc">Menu</string>
         <string name="upload_button_desc">Upload image</string>
         <string name="total_consumption">Total consumption</string>
-        <string name="cost_per_kwh">Cost per kWh</string>
+        <string name="cost_per_kwh">Total Cost</string>
         <string name="co2_emissions">CO2 Emissions</string>
         <string name="unit_kwh">KWh</string>
         <string name="energy">Energy</string>
         <string name="average_months">Average months</string>
+        <string name="to_link">To link your energy provider for smart energy management, please connect your account</string>
+        <string name="or_enter">Or, enter your provider login details directly below</string>
+        <string name="input">Enter your bill to keep everything under control</string>
+        <string name="input2">We\'ll analyze it and give you insights instantly</string>
 
 </resources>
 
