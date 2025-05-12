@@ -24,9 +24,9 @@
 
     <ImageView
         android:id="@+id/illustrationImage"
-        android:layout_width="407dp"
-        android:layout_height="253dp"
-        android:layout_marginTop="52dp"
+        android:layout_width="401dp"
+        android:layout_height="250dp"
+        android:layout_marginTop="50dp"
         android:adjustViewBounds="true"
         android:contentDescription="Smart Home Illustration"
         android:scaleType="fitCenter"
@@ -37,12 +37,12 @@
 
     <TextView
         android:id="@+id/text2"
+        style="@style/NunitoBoldText"
         android:layout_width="220dp"
         android:layout_height="61dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
         android:text="Or link your energy premest"
-        android:textColor="#344F62"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.057"
@@ -54,19 +54,19 @@
         android:layout_width="25dp"
         android:layout_height="25dp"
         android:layout_marginStart="40dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="230dp"
         android:src="@drawable/ball"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/text2" />
+        app:layout_constraintTop_toBottomOf="@+id/illustrationImage" />
 
     <TextView
         android:id="@+id/text3"
-        android:layout_width="210dp"
-        android:layout_height="57dp"
+        style="@style/NunitoBoldText"
+        android:layout_width="224dp"
+        android:layout_height="71dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
         android:text="See how much you can save"
-        android:textColor="#344F62"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.05"
@@ -77,23 +77,21 @@
         android:id="@+id/ball1"
         android:layout_width="25dp"
         android:layout_height="25dp"
-        android:layout_marginStart="40dp"
-        android:layout_marginTop="76dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="80dp"
         android:src="@drawable/ball"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/illustrationImage" />
 
     <TextView
         android:id="@+id/text1"
-        android:layout_width="223dp"
-        android:layout_height="58dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="56dp"
+        style="@style/NunitoBoldText"
+        android:layout_width="224dp"
+        android:layout_height="64dp"
+        android:layout_marginStart="14dp"
+        android:layout_marginTop="60dp"
         android:text="Connect your smart devices"
-        android:textColor="#344F62"
         android:textSize="24sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.059"
         app:layout_constraintStart_toEndOf="@id/ball1"
         app:layout_constraintTop_toBottomOf="@id/illustrationImage" />
 
@@ -102,10 +100,10 @@
         android:layout_width="25dp"
         android:layout_height="25dp"
         android:layout_marginStart="40dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="160dp"
         android:src="@drawable/ball"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/text1" />
+        app:layout_constraintTop_toBottomOf="@+id/illustrationImage" />
 
     <Button
         android:id="@+id/getStartedButton"

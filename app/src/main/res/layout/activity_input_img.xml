@@ -45,7 +45,7 @@
         android:layout_marginStart="136dp"
         android:layout_marginTop="392dp"
         android:backgroundTint="#344F62"
-        android:text="ivia"
+        android:text="invia"
         app:iconTint="#344F62"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

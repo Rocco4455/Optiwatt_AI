@@ -72,8 +72,8 @@
 
             <View
                 android:id="@+id/IconSotto"
-                android:layout_width="348dp"
-                android:layout_height="230dp"
+                android:layout_width="350dp"
+                android:layout_height="201dp"
                 android:layout_marginTop="30dp"
                 android:background="@drawable/stilecircolare"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -226,12 +226,23 @@
                 style="@style/NunitoBoldText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="120dp"
-                android:layout_marginTop="48dp"
+                android:layout_marginStart="125dp"
+                android:layout_marginTop="40dp"
                 android:text="All Tips"
                 android:textSize="28sp"
                 app:layout_constraintStart_toStartOf="@+id/IconSotto"
                 app:layout_constraintTop_toTopOf="@+id/IconSotto" />
+
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="128dp"
+                android:layout_height="137dp"
+                android:layout_marginTop="10dp"
+                app:layout_constraintBottom_toBottomOf="@+id/IconSotto"
+                app:layout_constraintStart_toStartOf="@+id/IconSotto"
+                app:layout_constraintTop_toTopOf="@+id/IconSotto"
+                app:layout_constraintVertical_bias="0.29"
+                app:srcCompat="@drawable/lampadina" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
