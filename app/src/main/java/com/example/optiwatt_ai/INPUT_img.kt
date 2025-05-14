@@ -53,10 +53,12 @@ class INPUT_img : AppCompatActivity() {
         bottoneSeleziona.setOnClickListener {
             controllaPermessiEOttieniImmagine()
         }
+
         val bottoneind = findViewById<Button>(R.id.BottoneIndietro)
-        bottoneind.setOnClickListener{
+        bottoneind.setOnClickListener {
             val intent = Intent(this, HomeActivity::class.java)
-            startActivity(intent)        }
+            startActivity(intent)
+        }
     }
 
     fun controllaPermessiEOttieniImmagine() {
@@ -74,8 +76,6 @@ class INPUT_img : AppCompatActivity() {
             PermessiL.launch(permesso)
         }
     }
-
-
 
     fun copiaImmagineInternamente(context: Context, imageUri: Uri): String? {
         return try {
@@ -95,7 +95,6 @@ class INPUT_img : AppCompatActivity() {
             null
         }
     }
-
 
     private fun salvaBollettaNelDatabase(context: Context, imageUri: Uri) {
         val db = AppDatabase.getInstance(context)
@@ -121,6 +120,7 @@ class INPUT_img : AppCompatActivity() {
             lifecycleScope.launch {
                 dao.inserisci(nuovaBolletta)
                 Toast.makeText(context, "Bolletta salvata internamente!", Toast.LENGTH_SHORT).show()
+                DeepSeekAnalyzer.analizzaUltimaBolletta(context)
             }
         } else {
             Toast.makeText(context, "Errore nel salvataggio dell'immagine", Toast.LENGTH_SHORT).show()

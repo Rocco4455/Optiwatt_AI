@@ -37,16 +37,26 @@ android {
 }
 
 dependencies {
+    // UI e AndroidX base
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+
+    // Room (Database)
+    implementation("androidx.room:room-runtime:2.6.1")
+    kapt("androidx.room:room-compiler:2.6.1")
+    implementation("androidx.room:room-ktx:2.6.1")
+
+    // OkHttp (API AI)
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+
+    // ML Kit (OCR)
+    implementation("com.google.mlkit:text-recognition:16.0.0")
+
+    // Test
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-    implementation("androidx.room:room-runtime:2.6.1")
-    kapt("androidx.room:room-compiler:2.6.1")
-    implementation("androidx.activity:activity-ktx:1.8.0")
-    implementation("androidx.room:room-ktx:2.6.1")
 }

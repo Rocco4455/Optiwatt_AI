@@ -1,29 +1,27 @@
 package com.example.optiwatt_ai
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.Query
+import androidx.room.*
 
 @Dao
 interface BollettaDao {
     @Insert
     suspend fun inserisci(bolletta: Bolletta)
 
+    @Update
+    suspend fun aggiorna(bolletta: Bolletta)
+
     @Query("SELECT * FROM Bolletta ORDER BY id DESC")
     suspend fun prendiTutte(): List<Bolletta>
 
-    @Query("SELECT consumoTotale, costoTotale, emissioniCO2 FROM Bolletta WHERE id = :id")
-    suspend fun prendiDatiEssenziali(id: Int): DatiBolletta
+    @Query("SELECT * FROM Bolletta ORDER BY id DESC LIMIT 1")
+    suspend fun prendiUltima(): Bolletta?
+
+    @Query("SELECT * FROM Bolletta WHERE id < :id ORDER BY id DESC LIMIT 1")
+    suspend fun prendiPenultima(id: Int): Bolletta?
+
+    @Query("SELECT uriImmagine FROM Bolletta ORDER BY id DESC LIMIT 1")
+    suspend fun getUltimoPathImmagine(): String?
 
     @Query("SELECT consumoTotale, costoTotale, emissioniCO2 FROM Bolletta ORDER BY id DESC LIMIT 1")
     suspend fun prendiUltimiDatiEssenziali(): DatiBolletta
-
 }
-// DADDA: tutte le query che l’intelligenza artificiale dovrà fare al database vanno scritte QUI.
-// Se devi filtrare bollette per costo, consumo, fornitore, periodo, ecc. scrivilo usando @Query
-// È anche qui che puoi creare query personalizzate per recuperare i dati che l’IA deve analizzare.
-// Ogni query può restituire una lista, un valore, o anche modificare le righe.
-//
-// Esempio per Dada (da cancellare dopo):
-// @Query("SELECT * FROM Bolletta WHERE costoTotale > 100")
-// suspend fun bolletteCostose(): List<Bolletta>

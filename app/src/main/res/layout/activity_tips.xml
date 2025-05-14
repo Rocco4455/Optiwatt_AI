@@ -6,35 +6,35 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#ededed"
-    tools:context=".HomeActivity">
+    tools:context=".TipsActivity">
 
     <androidx.core.widget.NestedScrollView
         android:id="@+id/scrollContent"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:fillViewport="true"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintEnd_toEndOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#ededed"
-            android:padding="24dp">
+            android:padding="24dp"
+            android:background="#ededed">
 
             <TextView
                 android:id="@+id/textHome"
-                style="@style/NunitoBoldText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Tips"
                 android:textSize="34sp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                style="@style/NunitoBoldText" />
 
             <ImageView
                 android:id="@+id/menuButton"
@@ -42,75 +42,59 @@
                 android:layout_height="48dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
-                android:clickable="true"
-                android:contentDescription="@string/menu_button_desc"
-                android:focusable="true"
                 android:src="@drawable/menu"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:contentDescription="@string/menu_button_desc"
+                android:clickable="true"
+                android:focusable="true"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
 
-
-            <View
-                android:id="@+id/view1"
+            <!-- Sezione consigli -->
+            <TextView
+                android:id="@+id/tip1Text"
                 android:layout_width="0dp"
-                android:layout_height="100dp"
-                android:layout_marginStart="16dp"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textSize="16sp"
                 android:layout_marginTop="32dp"
-                android:layout_marginEnd="16dp"
-                android:background="@drawable/stilecircolare"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/textHome"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/textHome" />
-
-
-            <View
-                android:id="@+id/view2"
-                android:layout_width="0dp"
-                android:layout_height="100dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="16dp"
-                android:background="@drawable/stilecircolare"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/view1" />
-
-            <View
-                android:id="@+id/view3"
-                android:layout_width="0dp"
-                android:layout_height="100dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="16dp"
-                android:layout_marginBottom="24dp"
-                android:background="@drawable/stilecircolare"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/view2" />
-
-            <ImageView
-                android:id="@+id/imageView2"
-                android:layout_width="75dp"
-                android:layout_height="75dp"
-                android:layout_marginEnd="240dp"
-                app:layout_constraintBottom_toBottomOf="@+id/view1"
-                app:layout_constraintEnd_toEndOf="@+id/view1"
-                app:layout_constraintStart_toStartOf="@+id/view1"
-                app:layout_constraintTop_toTopOf="@+id/view1"
-                app:srcCompat="@drawable/img_tip" />
+                app:layout_constraintEnd_toEndOf="parent" />
 
             <TextView
-                android:id="@+id/textView"
-                style="@style/NunitoBoldText"
+                android:id="@+id/tip2Text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textSize="16sp"
+                android:layout_marginTop="16dp"
+                app:layout_constraintTop_toBottomOf="@id/tip1Text"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
 
-                android:layout_width="230dp"
-                android:layout_height="70dp"
-                android:layout_marginStart="8dp"
-                android:text="TextView"
-                app:layout_constraintBottom_toBottomOf="@+id/view1"
-                app:layout_constraintStart_toEndOf="@+id/imageView2"
-                app:layout_constraintTop_toTopOf="@+id/view1" />
+            <TextView
+                android:id="@+id/tip3Text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textSize="16sp"
+                android:layout_marginTop="16dp"
+                app:layout_constraintTop_toBottomOf="@id/tip2Text"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
 
+            <!-- Previsione -->
+            <TextView
+                android:id="@+id/previsioneText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_marginTop="24dp"
+                app:layout_constraintTop_toBottomOf="@id/tip3Text"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>
