@@ -15,23 +15,15 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-data class DatiBolletta(
-    val consumoTotale: String,
-    val costoTotale: String,
-    val emissioniCO2: String
-)
-
-suspend fun calcolaMediaConsumoUltime3(dao: BollettaDao): Double {
-    val ultimeBolle = dao.prendiTutte().take(3)
-    if (ultimeBolle.isEmpty()) return 0.0
-    val valori = ultimeBolle.mapNotNull {
-        it.consumoTotale.replace(",", ".").toDoubleOrNull()
-    }
-    if (valori.isEmpty()) return 0.0
-    return valori.sum() / valori.size
-}
-
 class HomeActivity : AppCompatActivity() {
+
+    // Funzione per calcolare la media delle ultime 3 bollette
+    private suspend fun calcolaMediaConsumoUltime3(dao: BollettaDao): Double {
+        val ultime3 = dao.prendiTutte().sortedByDescending { it.id }.take(3)
+        val consumi = ultime3.mapNotNull { it.consumoTotale.replace(",", ".").toDoubleOrNull() }
+        return if (consumi.isNotEmpty()) consumi.average() else 0.0
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -45,15 +37,19 @@ class HomeActivity : AppCompatActivity() {
 
         val ringChart = findViewById<RingChartView>(R.id.ringChart)
         val uploadButton = findViewById<ImageView>(R.id.UploadButton)
+        val menuButton = findViewById<ImageView>(R.id.menuButton)
+        val consumoTextView = findViewById<TextView>(R.id.textConsumptionR)
+        val costoTextView = findViewById<TextView>(R.id.textCostR)
+        val co2TextView = findViewById<TextView>(R.id.textCO2R)
+        val consumoChartTextView = findViewById<TextView>(R.id.textInChartLeft)
+
         uploadButton.setOnClickListener {
             startActivity(Intent(this, INPUT_img::class.java))
         }
 
-        val menuButton = findViewById<ImageView>(R.id.menuButton)
         menuButton.setOnClickListener {
             val popup = PopupMenu(this, menuButton)
             popup.menuInflater.inflate(R.menu.popup_menu, popup.menu)
-
             popup.setOnMenuItemClickListener { item ->
                 when (item.itemId) {
                     R.id.go_to_provider -> {
@@ -71,7 +67,6 @@ class HomeActivity : AppCompatActivity() {
                     else -> false
                 }
             }
-
             popup.show()
         }
 
@@ -79,28 +74,21 @@ class HomeActivity : AppCompatActivity() {
             startActivity(Intent(this, TipsActivity::class.java))
         }
 
-        val consumoTextView = findViewById<TextView>(R.id.textConsumptionR)
-        val costoTextView = findViewById<TextView>(R.id.textCostR)
-        val co2TextView = findViewById<TextView>(R.id.textCO2R)
-        val consumoChartTextView = findViewById<TextView>(R.id.textInChartLeft)
-
         CoroutineScope(Dispatchers.IO).launch {
             val dao = AppDatabase.getInstance(applicationContext).bollettaDao()
-            val dati = dao.prendiUltima() ?: return@launch
+            val ultimaBolletta = dao.prendiUltima() ?: return@launch
             val mediaConsumo = calcolaMediaConsumoUltime3(dao)
+            val consumoAttuale = ultimaBolletta.consumoTotale.replace(",", ".").toDoubleOrNull() ?: 0.0
 
-            val consumoAttuale = dati.consumoTotale.replace(",", ".").toDoubleOrNull() ?: 0.0
-            val percentuale = if (mediaConsumo != 0.0) {
-                (consumoAttuale / mediaConsumo).coerceIn(0.0, 1.0).toFloat()
-            } else {
-                0f
-            }
+            val percentuale = if (mediaConsumo > 0) {
+                (consumoAttuale / mediaConsumo).toFloat().coerceIn(0f, 1f)
+            } else 0f
 
             withContext(Dispatchers.Main) {
-                consumoTextView.text = dati.consumoTotale
-                costoTextView.text = dati.costoTotale
-                co2TextView.text = dati.emissioniCO2
-                consumoChartTextView.text = String.format("%.1f", mediaConsumo)
+                consumoTextView.text = ultimaBolletta.consumoTotale
+                costoTextView.text = ultimaBolletta.costoTotale
+                co2TextView.text = ultimaBolletta.emissioniCO2
+                consumoChartTextView.text = String.format("%.1f", mediaConsumo) // valore medio visibile
 
                 ringChart.percent = percentuale
                 ringChart.invalidate()

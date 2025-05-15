@@ -3,18 +3,19 @@ package com.example.optiwatt_ai
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.util.Log
 import android.widget.Toast
 import com.googlecode.tesseract.android.TessBaseAPI
 import kotlinx.coroutines.*
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
+import org.json.JSONObject
 import java.io.File
-import java.io.IOException
 
 object DeepSeekAnalyzer {
 
-    private const val API_KEY = "sk-c7777518861542acb392d6d3619997ac"
+    private const val API_KEY = "sk-82448023cbeb44acb4b262ce5d38c8e8"
     private const val ENDPOINT = "https://api.deepseek.com/v1/chat/completions"
 
     fun analizzaUltimaBolletta(context: Context) {
@@ -33,7 +34,9 @@ object DeepSeekAnalyzer {
             try {
                 val bitmap = BitmapFactory.decodeFile(file.absolutePath)
                 val testoOCR = eseguiTesseractOCR(context, bitmap)
-                analizzaCampiSeparati(context, testoOCR, bolletta)
+                val testoPulito = pulisciTestoOCR(testoOCR)
+                Log.d("OCR_TESSERACT", "🧼 Testo OCR pulito:\n$testoPulito")
+                analizzaCampiSeparati(context, testoPulito, bolletta)
             } catch (e: Exception) {
                 showToast(context, "Errore OCR: ${e.message}")
             }
@@ -45,7 +48,6 @@ object DeepSeekAnalyzer {
         val tessDataPath = "${context.filesDir}/tesseract/"
         val lang = "ita"
 
-        // Copia traineddata da assets se non esiste
         val trainedDataFile = File("$tessDataPath/tessdata/ita.traineddata")
         if (!trainedDataFile.exists()) {
             trainedDataFile.parentFile?.mkdirs()
@@ -58,31 +60,54 @@ object DeepSeekAnalyzer {
 
         tess.init(tessDataPath, lang)
         tess.setImage(bitmap)
-        val testo = tess.utF8Text
+        val testo = tess.utF8Text ?: ""
+        Log.d("OCR_TESSERACT", "📄 Testo OCR rilevato:\n$testo")
         tess.end()
-        return testo ?: ""
+        return testo
+    }
+
+    private fun pulisciTestoOCR(testo: String): String {
+        return testo
+            .replace(Regex("[^\\p{Print}\\n]"), "")
+            .replace(Regex("\\s+"), " ")
+            .trim()
+    }
+
+    private suspend fun calcolaMediaConsumo(dao: BollettaDao): Double {
+        val bollette = dao.prendiTutte().sortedByDescending { it.id }.take(3)
+        val valori = bollette.mapNotNull { it.consumoTotale.replace(",", ".").toDoubleOrNull() }
+        return if (valori.isNotEmpty()) valori.average() else 0.0
+    }
+
+    private suspend fun calcolaMediaCosto(dao: BollettaDao): Double {
+        val bollette = dao.prendiTutte().sortedByDescending { it.id }.take(3)
+        val valori = bollette.mapNotNull { it.costoTotale.replace(",", ".").toDoubleOrNull() }
+        return if (valori.isNotEmpty()) valori.average() else 0.0
     }
 
     private fun analizzaCampiSeparati(context: Context, testo: String, bolletta: Bolletta) {
         val dao = AppDatabase.getInstance(context).bollettaDao()
         val client = OkHttpClient()
 
-        val campi = listOf(
-            "consumoTotale" to "Estrai solo il valore del consumo totale in kWh. Esempio: 125.4",
-            "costoTotale" to "Estrai solo il costo totale in euro. Esempio: 87.90",
-            "emissioniCO2" to "Estrai solo il valore delle emissioni di CO2 in kg. Esempio: 23.5",
-            "nomeFornitore" to "Estrai solo il nome del fornitore. Esempio: Enel",
-            "data" to "Estrai solo la data della bolletta nel formato GG/MM/AAAA. Esempio: 10/05/2025",
-            "previsioneConsumo" to "Prevedi solo il prossimo consumo in kWh. Esempio: 150.0",
-            "previsioneCosto" to "Prevedi solo il prossimo costo in euro. Esempio: 91.0",
-            "tip1" to "Fornisci un consiglio per risparmiare energia.",
-            "tip2" to "Fornisci un secondo consiglio per risparmiare energia.",
-            "tip3" to "Fornisci un terzo consiglio per risparmiare energia."
-        )
-
-        val risultati = mutableMapOf<String, String>()
-
         CoroutineScope(Dispatchers.IO).launch {
+            val mediaConsumo = calcolaMediaConsumo(dao)
+            val mediaCosto = calcolaMediaCosto(dao)
+
+            val campi = listOf(
+                "consumoTotale" to "Estrai solo il valore del consumo totale in kWh. Esempio: 125.4, di fianco al valore scrivi KWh",
+                "costoTotale" to "Estrai solo il costo totale in euro. Esempio: 87.90, affianco scrivi simbolo euro",
+                "emissioniCO2" to "Calcola una stima delle emissioni di CO2 in kg, basata su un consumo elettrico kWh e considerando il fornitor , Fornisci solo un numero seguito da kg, senza testo aggiuntivo o spiegazioni. Se il dato esatto non è disponibile, fornisci una stima coerente basata su dati generali della media nazionale.",
+                "nomeFornitore" to "Estrai solo il nome del fornitore. Esempio: Enel",
+                "data" to "Estrai solo la data della bolletta nel formato GG/MM/AAAA. Esempio: 10/05/2025",
+                "previsioneConsumo" to "Considera la media dei consumi delle ultime bollette: $mediaConsumo. Fornisci un valore previsto coerente basato anche su stagionalità e abitudini.",
+                "previsioneCosto" to "Considera la media dei costi delle ultime bollette: $mediaCosto. Fornisci un valore previsto coerente basato anche su stagionalità e tariffe.",
+                "tip1" to "Fornisci un consiglio pratico per risparmiare energia.",
+                "tip2" to "Fornisci un secondo consiglio utile per risparmiare energia, basato su fonti online.",
+                "tip3" to "Fornisci un terzo consiglio efficace per ridurre il consumo energetico domestico."
+            )
+
+            val risultati = mutableMapOf<String, String>()
+
             for ((campo, domanda) in campi) {
                 val risposta = inviaPrompt(client, testo, domanda)
                 risultati[campo] = risposta ?: "N/D"
@@ -103,31 +128,30 @@ object DeepSeekAnalyzer {
             )
 
             dao.aggiorna(aggiornata)
-            showToast(context, "✅ Bolletta aggiornata con Tesseract + IA")
+            showToast(context, "✅ Bolletta aggiornata con IA")
         }
     }
 
     private suspend fun inviaPrompt(client: OkHttpClient, testo: String, domanda: String): String? {
         return withContext(Dispatchers.IO) {
             val prompt = """
-                Questo è il testo OCR di una bolletta:
+                Questo è il testo OCR di una bolletta elettrica:
 
                 $testo
 
                 $domanda
-                Rispondi con un solo valore nella prima riga. Nessuna spiegazione.
+                Rispondi con un solo valore nella prima riga. Nessuna spiegazione. Se il dato non è presente, fornisci una stima coerente.
             """.trimIndent()
 
             val json = """
                 {
                   "model": "deepseek-chat",
-                  "messages": [{"role": "user", "content": "$prompt"}],
+                  "messages": [{"role": "user", "content": ${JSONObject.quote(prompt)}}],
                   "temperature": 0.3
                 }
             """.trimIndent()
 
             val body = json.toRequestBody("application/json".toMediaTypeOrNull())
-
             val request = Request.Builder()
                 .url(ENDPOINT)
                 .addHeader("Authorization", "Bearer $API_KEY")
@@ -137,10 +161,20 @@ object DeepSeekAnalyzer {
 
             try {
                 val response = client.newCall(request).execute()
-                val risposta = response.body?.string()?.trim()
-                println("🧠 Prompt IA:\n$prompt\n📥 Risposta: $risposta")
-                if (response.isSuccessful && !risposta.isNullOrBlank()) {
-                    risposta.lines().firstOrNull()?.trim()
+                val raw = response.body?.string()?.trim() ?: ""
+                Log.d("DEEPSEEK_AI", "📤 Prompt inviato:\n$prompt")
+                Log.d("DEEPSEEK_AI", "📥 Risposta ricevuta:\n$raw")
+
+                if (response.isSuccessful) {
+                    val jsonObj = JSONObject(raw)
+                    jsonObj.getJSONArray("choices")
+                        .getJSONObject(0)
+                        .getJSONObject("message")
+                        .getString("content")
+                        .trim()
+                        .lines()
+                        .firstOrNull()
+                        ?.trim()
                 } else null
             } catch (e: Exception) {
                 e.printStackTrace()

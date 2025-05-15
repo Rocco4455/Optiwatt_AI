@@ -4,6 +4,7 @@ import androidx.room.*
 
 @Dao
 interface BollettaDao {
+
     @Insert
     suspend fun inserisci(bolletta: Bolletta): Long
 
@@ -21,4 +22,6 @@ interface BollettaDao {
 
     @Query("SELECT uriImmagine FROM Bolletta ORDER BY id DESC LIMIT 1")
     suspend fun getUltimoPathImmagine(): String?
+
 }
+
