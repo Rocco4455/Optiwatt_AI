@@ -9,12 +9,12 @@ import kotlinx.coroutines.launch
 fun salvaBollettaNelDatabase(context: Context, uri: Uri) {
     val nuovaBolletta = Bolletta(
         uriImmagine = uri.toString(),
-        consumoTotale = 0.0,
-        costoTotale = 0.0,
-        emissioniCO2 = 0.0,
-        previsioneCosto = 0.0,
+        consumoTotale = "0.0",
+        costoTotale = "0.0",
+        emissioniCO2 = "0.0",
+        previsioneCosto = "0.0",
         nomeFornitore = "",
-        previsioneConsumo = 0.0,
+        previsioneConsumo = "0.0",
         data = "",
         tip1 = "",
         tip2 = "",

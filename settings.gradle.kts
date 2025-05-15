@@ -9,13 +9,16 @@ pluginManagement {
         }
         mavenCentral()
         gradlePluginPortal()
+        maven(url = "https://jitpack.io") // ✅ Per plugin da jitpack (se mai necessario)
     }
 }
+
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
         google()
         mavenCentral()
+        maven(url = "https://jitpack.io") // ✅ Necessario per tess-two
     }
 }
 

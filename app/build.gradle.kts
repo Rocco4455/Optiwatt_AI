@@ -14,7 +14,6 @@ android {
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -27,33 +26,46 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+
     kotlinOptions {
         jvmTarget = "11"
+    }
+
+    packagingOptions {
+        resources {
+            excludes += setOf("META-INF/LICENSE", "META-INF/NOTICE")
+        }
     }
 }
 
 dependencies {
-    // UI e AndroidX base
+    // AndroidX base
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
 
-    // Room (Database)
-    implementation("androidx.room:room-runtime:2.6.1")
-    kapt("androidx.room:room-compiler:2.6.1")
-    implementation("androidx.room:room-ktx:2.6.1")
+    // OCR: Tesseract (tess-two ufficiale mantenuto)
+    implementation("com.rmtheis:tess-two:9.1.0")
+    implementation("com.google.code.findbugs:jsr305:3.0.2")
 
-    // OkHttp (API AI)
-    implementation("com.squareup.okhttp3:okhttp:4.12.0")
-
-    // ML Kit (OCR)
+    // OCR fallback: ML Kit
     implementation("com.google.mlkit:text-recognition:16.0.0")
+    implementation(libs.vision.common)
+
+    // Room DB
+    implementation("androidx.room:room-runtime:2.6.1")
+    implementation("androidx.room:room-ktx:2.6.1")
+    kapt("androidx.room:room-compiler:2.6.1")
+
+    // Networking
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
 
     // Test
     testImplementation(libs.junit)

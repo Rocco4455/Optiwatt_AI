@@ -1,14 +1,11 @@
 package com.example.optiwatt_ai
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.widget.Toast
-import com.google.mlkit.vision.common.InputImage
-import com.google.mlkit.vision.text.TextRecognition
-import com.google.mlkit.vision.text.latin.TextRecognizerOptions // MODIFICATO: import corretto per Latin OCR
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import com.googlecode.tesseract.android.TessBaseAPI
+import kotlinx.coroutines.*
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -35,83 +32,97 @@ object DeepSeekAnalyzer {
 
             try {
                 val bitmap = BitmapFactory.decodeFile(file.absolutePath)
-                val image = InputImage.fromBitmap(bitmap, 0)
-
-                val recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS) // MODIFICATO
-
-                recognizer.process(image)
-                    .addOnSuccessListener { visionText ->
-                        val testo = visionText.text
-                        val estratti = estraiDatiDaOCR(testo)
-                        val aggiornata = bolletta.copy(
-                            consumoTotale = estratti.consumo,
-                            costoTotale = estratti.costo,
-                            emissioniCO2 = estratti.co2,
-                            nomeFornitore = estratti.fornitore,
-                            data = estratti.data
-                        )
-
-                        CoroutineScope(Dispatchers.IO).launch {
-                            dao.aggiorna(aggiornata)
-                            inviaTestoADeepSeek(context, testo, aggiornata)
-                        }
-                    }
-                    .addOnFailureListener { e ->
-                        showToast(context, "OCR fallito: ${e.message}")
-                    }
-
+                val testoOCR = eseguiTesseractOCR(context, bitmap)
+                analizzaCampiSeparati(context, testoOCR, bolletta)
             } catch (e: Exception) {
-                showToast(context, "Errore durante OCR: ${e.message}")
+                showToast(context, "Errore OCR: ${e.message}")
             }
         }
     }
 
-    private fun estraiDatiDaOCR(testo: String): DatiEstratti {
-        val consumoRegex = Regex("(?i)consumo.*?(\\d+[,.]?\\d*)\\s*kWh")
-        val costoRegex = Regex("(?i)costo.*?(\\d+[,.]?\\d*)\\s*€")
-        val co2Regex = Regex("(?i)emissioni.*?(\\d+[,.]?\\d*)\\s*kg")
-        val fornitoreRegex = Regex("(?i)fornitore[:\\n\\s]+([a-zA-Z0-9 ]+)")
-        val dataRegex = Regex("(?i)data[:\\n\\s]+(\\d{2}/\\d{2}/\\d{4})")
+    private fun eseguiTesseractOCR(context: Context, bitmap: Bitmap): String {
+        val tess = TessBaseAPI()
+        val tessDataPath = "${context.filesDir}/tesseract/"
+        val lang = "ita"
 
-        val consumo = consumoRegex.find(testo)?.groupValues?.get(1)?.replace(",", ".")?.toDoubleOrNull() ?: 0.0
-        val costo = costoRegex.find(testo)?.groupValues?.get(1)?.replace(",", ".")?.toDoubleOrNull() ?: 0.0
-        val co2 = co2Regex.find(testo)?.groupValues?.get(1)?.replace(",", ".")?.toDoubleOrNull() ?: 0.0
-        val fornitore = fornitoreRegex.find(testo)?.groupValues?.get(1)?.trim() ?: "Sconosciuto"
-        val data = dataRegex.find(testo)?.groupValues?.get(1) ?: "N/D"
+        // Copia traineddata da assets se non esiste
+        val trainedDataFile = File("$tessDataPath/tessdata/ita.traineddata")
+        if (!trainedDataFile.exists()) {
+            trainedDataFile.parentFile?.mkdirs()
+            context.assets.open("tessdata/ita.traineddata").use { input ->
+                trainedDataFile.outputStream().use { output ->
+                    input.copyTo(output)
+                }
+            }
+        }
 
-        return DatiEstratti(consumo, costo, co2, fornitore, data)
+        tess.init(tessDataPath, lang)
+        tess.setImage(bitmap)
+        val testo = tess.utF8Text
+        tess.end()
+        return testo ?: ""
     }
 
-    private fun inviaTestoADeepSeek(context: Context, testo: String, bolletta: Bolletta) {
-        val client = OkHttpClient()
+    private fun analizzaCampiSeparati(context: Context, testo: String, bolletta: Bolletta) {
         val dao = AppDatabase.getInstance(context).bollettaDao()
+        val client = OkHttpClient()
+
+        val campi = listOf(
+            "consumoTotale" to "Estrai solo il valore del consumo totale in kWh. Esempio: 125.4",
+            "costoTotale" to "Estrai solo il costo totale in euro. Esempio: 87.90",
+            "emissioniCO2" to "Estrai solo il valore delle emissioni di CO2 in kg. Esempio: 23.5",
+            "nomeFornitore" to "Estrai solo il nome del fornitore. Esempio: Enel",
+            "data" to "Estrai solo la data della bolletta nel formato GG/MM/AAAA. Esempio: 10/05/2025",
+            "previsioneConsumo" to "Prevedi solo il prossimo consumo in kWh. Esempio: 150.0",
+            "previsioneCosto" to "Prevedi solo il prossimo costo in euro. Esempio: 91.0",
+            "tip1" to "Fornisci un consiglio per risparmiare energia.",
+            "tip2" to "Fornisci un secondo consiglio per risparmiare energia.",
+            "tip3" to "Fornisci un terzo consiglio per risparmiare energia."
+        )
+
+        val risultati = mutableMapOf<String, String>()
 
         CoroutineScope(Dispatchers.IO).launch {
-            val penultima = dao.prendiPenultima(bolletta.id)
+            for ((campo, domanda) in campi) {
+                val risposta = inviaPrompt(client, testo, domanda)
+                risultati[campo] = risposta ?: "N/D"
+                delay(1500)
+            }
 
-            val testoConfronto = penultima?.let {
-                "\nBolletta precedente:\n" +
-                        "Consumo: ${it.consumoTotale} kWh, Costo: €${it.costoTotale}, CO2: ${it.emissioniCO2} kg\n"
-            } ?: ""
+            val aggiornata = bolletta.copy(
+                consumoTotale = risultati["consumoTotale"] ?: "N/D",
+                costoTotale = risultati["costoTotale"] ?: "N/D",
+                emissioniCO2 = risultati["emissioniCO2"] ?: "N/D",
+                nomeFornitore = risultati["nomeFornitore"] ?: "Sconosciuto",
+                data = risultati["data"] ?: "N/D",
+                previsioneConsumo = risultati["previsioneConsumo"] ?: "N/D",
+                previsioneCosto = risultati["previsioneCosto"] ?: "N/D",
+                tip1 = risultati["tip1"] ?: "",
+                tip2 = risultati["tip2"] ?: "",
+                tip3 = risultati["tip3"] ?: ""
+            )
 
+            dao.aggiorna(aggiornata)
+            showToast(context, "✅ Bolletta aggiornata con Tesseract + IA")
+        }
+    }
+
+    private suspend fun inviaPrompt(client: OkHttpClient, testo: String, domanda: String): String? {
+        return withContext(Dispatchers.IO) {
             val prompt = """
-                Questa è una bolletta elettrica:
+                Questo è il testo OCR di una bolletta:
+
                 $testo
 
-                $testoConfronto
-                Fornisci:
-                - 3 consigli per risparmiare energia
-                - Una previsione del consumo e del costo della prossima bolletta
+                $domanda
+                Rispondi con un solo valore nella prima riga. Nessuna spiegazione.
             """.trimIndent()
 
             val json = """
                 {
                   "model": "deepseek-chat",
-                  "messages": [{
-                    "role": "user",
-                    "content": "$prompt"
-                  }],
-                  "temperature": 0.7
+                  "messages": [{"role": "user", "content": "$prompt"}],
+                  "temperature": 0.3
                 }
             """.trimIndent()
 
@@ -124,39 +135,17 @@ object DeepSeekAnalyzer {
                 .post(body)
                 .build()
 
-            client.newCall(request).enqueue(object : Callback {
-                override fun onFailure(call: Call, e: IOException) {
-                    showToast(context, "Errore rete: ${e.message}")
-                }
-
-                override fun onResponse(call: Call, response: Response) {
-                    val risposta = response.body?.string()
-                    if (risposta == null) {
-                        showToast(context, "Risposta vuota da DeepSeek")
-                        return
-                    }
-
-                    CoroutineScope(Dispatchers.IO).launch {
-                        val righe = risposta.lines().map { it.trim() }
-                        val consigli = righe.filter { it.startsWith("1.") || it.startsWith("2.") || it.startsWith("3.") }
-
-                        val previsioneConsumo = Regex("(?i)consumo.*?(\\d+[,.]?\\d*)\\s*kWh")
-                            .find(risposta)?.groupValues?.get(1)?.replace(",", ".")?.toDoubleOrNull() ?: 0.0
-                        val previsioneCosto = Regex("(?i)costo.*?(\\d+[,.]?\\d*)\\s*€")
-                            .find(risposta)?.groupValues?.get(1)?.replace(",", ".")?.toDoubleOrNull() ?: 0.0
-
-                        val aggiornata = bolletta.copy(
-                            tip1 = consigli.getOrNull(0) ?: "",
-                            tip2 = consigli.getOrNull(1) ?: "",
-                            tip3 = consigli.getOrNull(2) ?: "",
-                            previsioneConsumo = previsioneConsumo,
-                            previsioneCosto = previsioneCosto
-                        )
-
-                        dao.aggiorna(aggiornata)
-                    }
-                }
-            })
+            try {
+                val response = client.newCall(request).execute()
+                val risposta = response.body?.string()?.trim()
+                println("🧠 Prompt IA:\n$prompt\n📥 Risposta: $risposta")
+                if (response.isSuccessful && !risposta.isNullOrBlank()) {
+                    risposta.lines().firstOrNull()?.trim()
+                } else null
+            } catch (e: Exception) {
+                e.printStackTrace()
+                null
+            }
         }
     }
 
@@ -165,12 +154,4 @@ object DeepSeekAnalyzer {
             Toast.makeText(context, message, Toast.LENGTH_LONG).show()
         }
     }
-
-    data class DatiEstratti(
-        val consumo: Double,
-        val costo: Double,
-        val co2: Double,
-        val fornitore: String,
-        val data: String
-    )
 }

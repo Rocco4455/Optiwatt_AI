@@ -16,16 +16,19 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 data class DatiBolletta(
-    val consumoTotale: Double,
-    val costoTotale: Double,
-    val emissioniCO2: Double
+    val consumoTotale: String,
+    val costoTotale: String,
+    val emissioniCO2: String
 )
 
 suspend fun calcolaMediaConsumoUltime3(dao: BollettaDao): Double {
-    val ultimeBolle: List<Bolletta> = dao.prendiTutte().take(3)
+    val ultimeBolle = dao.prendiTutte().take(3)
     if (ultimeBolle.isEmpty()) return 0.0
-    val somma = ultimeBolle.sumOf { it.consumoTotale }
-    return somma / ultimeBolle.size
+    val valori = ultimeBolle.mapNotNull {
+        it.consumoTotale.replace(",", ".").toDoubleOrNull()
+    }
+    if (valori.isEmpty()) return 0.0
+    return valori.sum() / valori.size
 }
 
 class HomeActivity : AppCompatActivity() {
@@ -43,8 +46,7 @@ class HomeActivity : AppCompatActivity() {
         val ringChart = findViewById<RingChartView>(R.id.ringChart)
         val uploadButton = findViewById<ImageView>(R.id.UploadButton)
         uploadButton.setOnClickListener {
-            val intent = Intent(this, INPUT_img::class.java)
-            startActivity(intent)
+            startActivity(Intent(this, INPUT_img::class.java))
         }
 
         val menuButton = findViewById<ImageView>(R.id.menuButton)
@@ -73,10 +75,8 @@ class HomeActivity : AppCompatActivity() {
             popup.show()
         }
 
-        val iconSotto = findViewById<View>(R.id.IconSotto)
-        iconSotto.setOnClickListener {
-            val intent = Intent(this, TipsActivity::class.java)
-            startActivity(intent)
+        findViewById<View>(R.id.IconSotto).setOnClickListener {
+            startActivity(Intent(this, TipsActivity::class.java))
         }
 
         val consumoTextView = findViewById<TextView>(R.id.textConsumptionR)
@@ -86,20 +86,21 @@ class HomeActivity : AppCompatActivity() {
 
         CoroutineScope(Dispatchers.IO).launch {
             val dao = AppDatabase.getInstance(applicationContext).bollettaDao()
-            val dati = dao.prendiUltimiDatiEssenziali()
+            val dati = dao.prendiUltima() ?: return@launch
             val mediaConsumo = calcolaMediaConsumoUltime3(dao)
 
+            val consumoAttuale = dati.consumoTotale.replace(",", ".").toDoubleOrNull() ?: 0.0
             val percentuale = if (mediaConsumo != 0.0) {
-                (dati.consumoTotale / mediaConsumo).coerceIn(0.0, 1.0).toFloat()
+                (consumoAttuale / mediaConsumo).coerceIn(0.0, 1.0).toFloat()
             } else {
                 0f
             }
 
             withContext(Dispatchers.Main) {
-                consumoTextView.text = "${dati.consumoTotale} kWh"
-                costoTextView.text = "${dati.costoTotale} €"
-                co2TextView.text = "${dati.emissioniCO2} kg CO₂"
-                consumoChartTextView.text = "$mediaConsumo"
+                consumoTextView.text = dati.consumoTotale
+                costoTextView.text = dati.costoTotale
+                co2TextView.text = dati.emissioniCO2
+                consumoChartTextView.text = String.format("%.1f", mediaConsumo)
 
                 ringChart.percent = percentuale
                 ringChart.invalidate()

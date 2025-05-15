@@ -7,14 +7,15 @@ import androidx.room.PrimaryKey
 data class Bolletta(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val uriImmagine: String,
-    val consumoTotale: Double,
-    val costoTotale: Double,
-    val emissioniCO2: Double,
-    val previsioneCosto: Double,
+    val consumoTotale: String,
+    val costoTotale: String,
+    val emissioniCO2: String,
+    val previsioneCosto: String,
     val nomeFornitore: String,
-    val previsioneConsumo: Double,
+    val previsioneConsumo: String,
     val data: String,
     val tip1: String,
     val tip2: String,
     val tip3: String
 )
+

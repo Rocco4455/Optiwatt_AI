@@ -23,12 +23,12 @@ class OptiwattApp : Application() {
                     dao.inserisci(
                         Bolletta(
                             uriImmagine = "init",
-                            consumoTotale = 0.0,
-                            costoTotale = 0.0,
-                            emissioniCO2 = 0.0,
-                            previsioneCosto = 0.0,
+                            consumoTotale = "0.0",
+                            costoTotale = "0.0",
+                            emissioniCO2 = "0.0",
+                            previsioneCosto = "0.0",
                             nomeFornitore = "default",
-                            previsioneConsumo = 0.0,
+                            previsioneConsumo = "0.0",
                             data = "2025-01-01",
                             tip1 = "init",
                             tip2 = "init",

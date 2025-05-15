@@ -5,10 +5,10 @@ import androidx.room.*
 @Dao
 interface BollettaDao {
     @Insert
-    suspend fun inserisci(bolletta: Bolletta)
+    suspend fun inserisci(bolletta: Bolletta): Long
 
     @Update
-    suspend fun aggiorna(bolletta: Bolletta)
+    suspend fun aggiorna(bolletta: Bolletta): Int
 
     @Query("SELECT * FROM Bolletta ORDER BY id DESC")
     suspend fun prendiTutte(): List<Bolletta>
@@ -21,7 +21,4 @@ interface BollettaDao {
 
     @Query("SELECT uriImmagine FROM Bolletta ORDER BY id DESC LIMIT 1")
     suspend fun getUltimoPathImmagine(): String?
-
-    @Query("SELECT consumoTotale, costoTotale, emissioniCO2 FROM Bolletta ORDER BY id DESC LIMIT 1")
-    suspend fun prendiUltimiDatiEssenziali(): DatiBolletta
 }

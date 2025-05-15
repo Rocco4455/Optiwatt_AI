@@ -37,8 +37,9 @@ class INPUT_img : AppCompatActivity() {
         ImageLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
             uri?.let {
                 immagine.setImageURI(it)
+                bottoneSeleziona.text = "Analisi in corso..."
+                bottoneSeleziona.isEnabled = false
                 salvaBollettaNelDatabase(this, it)
-                bottoneSeleziona.text = "Immagine caricata"
             } ?: Toast.makeText(this, "Nessuna immagine selezionata", Toast.LENGTH_SHORT).show()
         }
 
@@ -54,10 +55,8 @@ class INPUT_img : AppCompatActivity() {
             controllaPermessiEOttieniImmagine()
         }
 
-        val bottoneind = findViewById<Button>(R.id.BottoneIndietro)
-        bottoneind.setOnClickListener {
-            val intent = Intent(this, HomeActivity::class.java)
-            startActivity(intent)
+        findViewById<Button>(R.id.BottoneIndietro).setOnClickListener {
+            startActivity(Intent(this, HomeActivity::class.java))
         }
     }
 
@@ -105,12 +104,12 @@ class INPUT_img : AppCompatActivity() {
         if (pathLocale != null) {
             val nuovaBolletta = Bolletta(
                 uriImmagine = pathLocale,
-                consumoTotale = 0.0,
-                costoTotale = 0.0,
-                emissioniCO2 = 0.0,
-                previsioneCosto = 0.0,
+                consumoTotale = "0.0",
+                costoTotale = "0.0",
+                emissioniCO2 = "0.0",
+                previsioneCosto = "0.0",
                 nomeFornitore = " ",
-                previsioneConsumo = 0.0,
+                previsioneConsumo = "0.0",
                 data = " ",
                 tip1 = " ",
                 tip2 = " ",
@@ -118,12 +117,23 @@ class INPUT_img : AppCompatActivity() {
             )
 
             lifecycleScope.launch {
-                dao.inserisci(nuovaBolletta)
-                Toast.makeText(context, "Bolletta salvata internamente!", Toast.LENGTH_SHORT).show()
+                val id = dao.inserisci(nuovaBolletta).toInt()
+                val bollettaConId = nuovaBolletta.copy(id = id)
+
+                dao.aggiorna(bollettaConId)
+
+                Toast.makeText(context, "Bolletta salvata!", Toast.LENGTH_SHORT).show()
+
+                // Avvia OCR e IA
                 DeepSeekAnalyzer.analizzaUltimaBolletta(context)
+
+                bottoneSeleziona.text = "Immagine analizzata"
+                bottoneSeleziona.isEnabled = true
             }
         } else {
             Toast.makeText(context, "Errore nel salvataggio dell'immagine", Toast.LENGTH_SHORT).show()
+            bottoneSeleziona.text = "Errore"
+            bottoneSeleziona.isEnabled = true
         }
     }
 }
