@@ -75,9 +75,15 @@ object DeepSeekAnalyzer {
 
     private suspend fun calcolaMediaConsumo(dao: BollettaDao): Double {
         val bollette = dao.prendiTutte().sortedByDescending { it.id }.take(3)
-        val valori = bollette.mapNotNull { it.consumoTotale.replace(",", ".").toDoubleOrNull() }
+        val valori = bollette.mapNotNull {
+            it.consumoTotale
+                .replace(",", ".")
+                .replace(Regex("[^\\d.]"), "") // 🔥 rimuove tutto tranne numeri e punto
+                .toDoubleOrNull()
+        }
         return if (valori.isNotEmpty()) valori.average() else 0.0
     }
+
 
     private suspend fun calcolaMediaCosto(dao: BollettaDao): Double {
         val bollette = dao.prendiTutte().sortedByDescending { it.id }.take(3)

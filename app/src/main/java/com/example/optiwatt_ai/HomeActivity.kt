@@ -18,11 +18,16 @@ import kotlinx.coroutines.withContext
 class HomeActivity : AppCompatActivity() {
 
     // Funzione per calcolare la media delle ultime 3 bollette
-    private suspend fun calcolaMediaConsumoUltime3(dao: BollettaDao): Double {
-        val ultime3 = dao.prendiTutte().sortedByDescending { it.id }.take(3)
-        val consumi = ultime3.mapNotNull { it.consumoTotale.replace(",", ".").toDoubleOrNull() }
-        return if (consumi.isNotEmpty()) consumi.average() else 0.0
+    suspend fun calcolaMediaConsumoUltime3(dao: BollettaDao): Double {
+        val ultimeBolle = dao.prendiTutte().sortedByDescending { it.id }.take(3)
+        val valori = ultimeBolle.mapNotNull {
+            it.consumoTotale.replace(",", ".")
+                .replace(Regex("[^\\d.]"), "") // rimuove simboli, testo tipo "kWh"
+                .toDoubleOrNull()
+        }
+        return if (valori.isNotEmpty()) valori.sum() / valori.size else 0.0
     }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
