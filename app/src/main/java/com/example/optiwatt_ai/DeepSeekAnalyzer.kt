@@ -5,6 +5,7 @@ import android.graphics.BitmapFactory
 import android.widget.Toast
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
+import com.google.mlkit.vision.text.latin.TextRecognizerOptions // MODIFICATO: import corretto per Latin OCR
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -16,7 +17,7 @@ import java.io.IOException
 
 object DeepSeekAnalyzer {
 
-    private const val API_KEY = "INSERISCI_LA_TUA_API_KEY_DI_DEEPSEEK"
+    private const val API_KEY = "sk-c7777518861542acb392d6d3619997ac"
     private const val ENDPOINT = "https://api.deepseek.com/v1/chat/completions"
 
     fun analizzaUltimaBolletta(context: Context) {
@@ -35,7 +36,8 @@ object DeepSeekAnalyzer {
             try {
                 val bitmap = BitmapFactory.decodeFile(file.absolutePath)
                 val image = InputImage.fromBitmap(bitmap, 0)
-                val recognizer = TextRecognition.getClient()
+
+                val recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS) // MODIFICATO
 
                 recognizer.process(image)
                     .addOnSuccessListener { visionText ->
@@ -128,7 +130,11 @@ object DeepSeekAnalyzer {
                 }
 
                 override fun onResponse(call: Call, response: Response) {
-                    val risposta = response.body?.string() ?: return
+                    val risposta = response.body?.string()
+                    if (risposta == null) {
+                        showToast(context, "Risposta vuota da DeepSeek")
+                        return
+                    }
 
                     CoroutineScope(Dispatchers.IO).launch {
                         val righe = risposta.lines().map { it.trim() }
