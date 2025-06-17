@@ -142,9 +142,18 @@ object DeepSeekAnalyzer {
             val testo = "Testo OCR bolletta non richiesto, fornisci direttamente consigli."
 
             val campi = listOf(
-                "tip1" to "Fornisci un consiglio pratico per risparmiare energia in cucina, adatto a una famiglia media.",
-                "tip2" to "Suggerisci un comportamento o abitudine giornaliera per ridurre il consumo elettrico nel soggiorno o nella zona giorno.",
-                "tip3" to "Consiglia una modifica tecnologica o strumento utile per migliorare l’efficienza energetica domestica, come lampadine, termostati, o elettrodomestici smart."
+                "tip1" to "Fornisci un consiglio dettagliato per ridurre i consumi energetici cambiando abitudini quotidiane \n" +
+                        "(domestiche o lavorative). Il consiglio deve essere pratico, attuabile da chiunque e basato su \n" +
+                        "comportamenti concreti, come uso di elettrodomestici, luci, riscaldamento, ecc.\n" +
+                        "Scrivi in modo chiaro e diretto, massimo 2 frasi.",
+                "tip2" to "Suggerisci una soluzione basata sulla sostituzione o ottimizzazione di dispositivi elettrici o sistemi domestici \n" +
+                        "(es. caldaia, condizionatore, lampadine, prese smart, pannelli solari). \n" +
+                        "Indica uno strumento o tecnologia efficiente e diffusa nel 2024, con un linguaggio accessibile. \n" +
+                        "Fornisci solo il consiglio, senza spiegazioni lunghe.",
+                "tip3" to "Consiglia una strategia di risparmio energetico che tenga conto di fasce orarie, tariffe multiorarie \n" +
+                        "(o biorarie), e stagionalità. Il consiglio deve essere realistico e utile in Italia nel 2024, \n" +
+                        "es. evitare l’uso della lavatrice in fascia F1. \n" +
+                        "Limita la risposta a un solo consiglio concreto."
             )
 
             val risultati = mutableMapOf<String, String>()
@@ -181,7 +190,7 @@ object DeepSeekAnalyzer {
                 {
                   "model": "deepseek-chat",
                   "messages": [{"role": "user", "content": ${JSONObject.quote(prompt)}}],
-                  "temperature": 0.3
+                  "temperature": 1
                 }
             """.trimIndent()
 
