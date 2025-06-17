@@ -2,17 +2,22 @@ package com.example.optiwatt_ai
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.ImageView
 import android.widget.PopupMenu
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class TipsActivity : AppCompatActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
@@ -53,8 +58,18 @@ class TipsActivity : AppCompatActivity() {
         val tip2Text = findViewById<TextView>(R.id.tip2Text)
         val tip3Text = findViewById<TextView>(R.id.tip3Text)
         val previsioneText = findViewById<TextView>(R.id.previsioneText)
+        val loadingSpinner = findViewById<ProgressBar>(R.id.loadingSpinner)
+        val loadingText = findViewById<TextView>(R.id.loadingText)
+
+        // Mostra spinner e testo di caricamento
+        loadingSpinner.visibility = View.VISIBLE
+        loadingText.visibility = View.VISIBLE
 
         lifecycleScope.launch {
+            withContext(Dispatchers.IO) {
+                DeepSeekAnalyzer.generaConsigliIA(applicationContext)
+            }
+
             val bolletta = AppDatabase.getInstance(this@TipsActivity).bollettaDao().prendiUltima()
             bolletta?.let {
                 tip1Text.text = it.tip1
@@ -62,6 +77,10 @@ class TipsActivity : AppCompatActivity() {
                 tip3Text.text = it.tip3
                 previsioneText.text = "Prossima bolletta: ${it.previsioneConsumo} kWh, €${it.previsioneCosto}"
             }
+
+            // Nascondi caricamento
+            loadingSpinner.visibility = View.GONE
+            loadingText.visibility = View.GONE
         }
     }
 }

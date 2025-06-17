@@ -36,7 +36,10 @@ object DeepSeekAnalyzer {
                 val testoOCR = eseguiTesseractOCR(context, bitmap)
                 val testoPulito = pulisciTestoOCR(testoOCR)
                 Log.d("OCR_TESSERACT", "🧼 Testo OCR pulito:\n$testoPulito")
-                analizzaCampiSeparati(context, testoPulito, bolletta)
+
+                analizzaDatiBolletta(context, testoPulito, bolletta)
+                generaConsigliIA(context)
+
             } catch (e: Exception) {
                 showToast(context, "Errore OCR: ${e.message}")
             }
@@ -76,22 +79,20 @@ object DeepSeekAnalyzer {
     private suspend fun calcolaMediaConsumo(dao: BollettaDao): Double {
         val bollette = dao.prendiTutte().sortedByDescending { it.id }.take(3)
         val valori = bollette.mapNotNull {
-            it.consumoTotale
-                .replace(",", ".")
-                .replace(Regex("[^\\d.]"), "") // 🔥 rimuove tutto tranne numeri e punto
-                .toDoubleOrNull()
+            it.consumoTotale.replace(",", ".").replace(Regex("[^\\d.]"), "").toDoubleOrNull()
         }
         return if (valori.isNotEmpty()) valori.average() else 0.0
     }
 
-
     private suspend fun calcolaMediaCosto(dao: BollettaDao): Double {
         val bollette = dao.prendiTutte().sortedByDescending { it.id }.take(3)
-        val valori = bollette.mapNotNull { it.costoTotale.replace(",", ".").toDoubleOrNull() }
+        val valori = bollette.mapNotNull {
+            it.costoTotale.replace(",", ".").replace(Regex("[^\\d.]"), "").toDoubleOrNull()
+        }
         return if (valori.isNotEmpty()) valori.average() else 0.0
     }
 
-    private fun analizzaCampiSeparati(context: Context, testo: String, bolletta: Bolletta) {
+    fun analizzaDatiBolletta(context: Context, testo: String, bolletta: Bolletta) {
         val dao = AppDatabase.getInstance(context).bollettaDao()
         val client = OkHttpClient()
 
@@ -102,14 +103,11 @@ object DeepSeekAnalyzer {
             val campi = listOf(
                 "consumoTotale" to "Estrai solo il valore del consumo totale in kWh. Esempio: 125.4, di fianco al valore scrivi KWh",
                 "costoTotale" to "Estrai solo il costo totale in euro. Esempio: 87.90, affianco scrivi simbolo euro",
-                "emissioniCO2" to "Calcola una stima delle emissioni di CO2 in kg, basata su un consumo elettrico kWh e considerando il fornitor , Fornisci solo un numero seguito da kg, senza testo aggiuntivo o spiegazioni. Se il dato esatto non è disponibile, fornisci una stima coerente basata su dati generali della media nazionale.",
+                "emissioniCO2" to "Calcola una stima delle emissioni di CO2 in kg, basata su un consumo elettrico kWh. Fornisci solo un numero seguito da kg.",
                 "nomeFornitore" to "Estrai solo il nome del fornitore. Esempio: Enel",
                 "data" to "Estrai solo la data della bolletta nel formato GG/MM/AAAA. Esempio: 10/05/2025",
-                "previsioneConsumo" to "Considera la media dei consumi delle ultime bollette: $mediaConsumo. Fornisci un valore previsto coerente basato anche su stagionalità e abitudini.",
-                "previsioneCosto" to "Considera la media dei costi delle ultime bollette: $mediaCosto. Fornisci un valore previsto coerente basato anche su stagionalità e tariffe.",
-                "tip1" to "Fornisci un consiglio pratico per risparmiare energia.",
-                "tip2" to "Fornisci un secondo consiglio utile per risparmiare energia, basato su fonti online.",
-                "tip3" to "Fornisci un terzo consiglio efficace per ridurre il consumo energetico domestico."
+                "previsioneConsumo" to "Considera la media dei consumi delle ultime bollette: $mediaConsumo. Fornisci un valore previsto basato su stagionalità e abitudini.",
+                "previsioneCosto" to "Considera la media dei costi delle ultime bollette: $mediaCosto. Fornisci un valore previsto basato su tariffe e abitudini."
             )
 
             val risultati = mutableMapOf<String, String>()
@@ -127,14 +125,44 @@ object DeepSeekAnalyzer {
                 nomeFornitore = risultati["nomeFornitore"] ?: "Sconosciuto",
                 data = risultati["data"] ?: "N/D",
                 previsioneConsumo = risultati["previsioneConsumo"] ?: "N/D",
-                previsioneCosto = risultati["previsioneCosto"] ?: "N/D",
+                previsioneCosto = risultati["previsioneCosto"] ?: "N/D"
+            )
+
+            dao.aggiorna(aggiornata)
+            showToast(context, "✅ Dati bolletta aggiornati con IA")
+        }
+    }
+
+    fun generaConsigliIA(context: Context) {
+        val dao = AppDatabase.getInstance(context).bollettaDao()
+        val client = OkHttpClient()
+
+        CoroutineScope(Dispatchers.IO).launch {
+            val bolletta = dao.prendiUltima() ?: return@launch
+            val testo = "Testo OCR bolletta non richiesto, fornisci direttamente consigli."
+
+            val campi = listOf(
+                "tip1" to "Fornisci un consiglio pratico per risparmiare energia.",
+                "tip2" to "Fornisci un secondo consiglio utile per risparmiare energia, basato su fonti online.",
+                "tip3" to "Fornisci un terzo consiglio efficace per ridurre il consumo energetico domestico."
+            )
+
+            val risultati = mutableMapOf<String, String>()
+
+            for ((campo, domanda) in campi) {
+                val risposta = inviaPrompt(client, testo, domanda)
+                risultati[campo] = risposta ?: ""
+                delay(1500)
+            }
+
+            val aggiornata = bolletta.copy(
                 tip1 = risultati["tip1"] ?: "",
                 tip2 = risultati["tip2"] ?: "",
                 tip3 = risultati["tip3"] ?: ""
             )
 
             dao.aggiorna(aggiornata)
-            showToast(context, "✅ Bolletta aggiornata con IA")
+            showToast(context, "✨ Consigli IA aggiornati")
         }
     }
 
@@ -146,7 +174,7 @@ object DeepSeekAnalyzer {
                 $testo
 
                 $domanda
-                Rispondi con un solo valore nella prima riga. Nessuna spiegazione. Se il dato non è presente, fornisci una stima coerente.
+                Rispondi con un solo valore nella prima riga. Nessuna spiegazione.
             """.trimIndent()
 
             val json = """
