@@ -49,7 +49,6 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
 
-            <!-- Sezione consigli -->
             <TextView
                 android:id="@+id/tip1Text"
                 android:layout_width="0dp"
@@ -83,7 +82,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
 
-            <!-- Previsione -->
             <TextView
                 android:id="@+id/previsioneText"
                 android:layout_width="0dp"
