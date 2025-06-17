@@ -8,7 +8,6 @@
     android:background="#ededed"
     tools:context=".TipsActivity">
 
-    <!-- Contenuto principale scrollabile -->
     <androidx.core.widget.NestedScrollView
         android:id="@+id/scrollContent"
         android:layout_width="0dp"
@@ -50,43 +49,112 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
 
-            <!-- Tip 1 -->
-            <TextView
-                android:id="@+id/tip1Text"
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardTip1"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text=""
-                android:textSize="16sp"
                 android:layout_marginTop="32dp"
                 app:layout_constraintTop_toBottomOf="@id/textHome"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
+                app:layout_constraintEnd_toEndOf="parent"
+                app:cardElevation="6dp"
+                app:cardCornerRadius="12dp"
+                app:cardBackgroundColor="@android:color/white">
 
-            <!-- Tip 2 -->
-            <TextView
-                android:id="@+id/tip2Text"
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:text="Consiglio 1"
+                        android:textStyle="bold"
+                        android:textSize="16sp"
+                        android:textColor="#000000" />
+
+                    <TextView
+                        android:id="@+id/tip1Text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:textSize="15sp"
+                        android:layout_marginTop="4dp" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardTip2"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text=""
-                android:textSize="16sp"
                 android:layout_marginTop="16dp"
-                app:layout_constraintTop_toBottomOf="@id/tip1Text"
+                app:layout_constraintTop_toBottomOf="@id/cardTip1"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
+                app:layout_constraintEnd_toEndOf="parent"
+                app:cardElevation="6dp"
+                app:cardCornerRadius="12dp"
+                app:cardBackgroundColor="@android:color/white">
 
-            <!-- Tip 3 -->
-            <TextView
-                android:id="@+id/tip3Text"
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:text="Consiglio 2"
+                        android:textStyle="bold"
+                        android:textSize="16sp"
+                        android:textColor="#000000" />
+
+                    <TextView
+                        android:id="@+id/tip2Text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:textSize="15sp"
+                        android:layout_marginTop="4dp" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardTip3"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text=""
-                android:textSize="16sp"
                 android:layout_marginTop="16dp"
-                app:layout_constraintTop_toBottomOf="@id/tip2Text"
+                app:layout_constraintTop_toBottomOf="@id/cardTip2"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
+                app:layout_constraintEnd_toEndOf="parent"
+                app:cardElevation="6dp"
+                app:cardCornerRadius="12dp"
+                app:cardBackgroundColor="@android:color/white">
 
-            <!-- Previsione -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:text="Consiglio 3"
+                        android:textStyle="bold"
+                        android:textSize="16sp"
+                        android:textColor="#000000" />
+
+                    <TextView
+                        android:id="@+id/tip3Text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:textSize="15sp"
+                        android:layout_marginTop="4dp" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+
             <TextView
                 android:id="@+id/previsioneText"
                 android:layout_width="0dp"
@@ -94,14 +162,16 @@
                 android:text=""
                 android:textSize="18sp"
                 android:textStyle="bold"
+                android:textColor="#333333"
                 android:layout_marginTop="24dp"
-                app:layout_constraintTop_toBottomOf="@id/tip3Text"
+                android:layout_marginBottom="32dp"
+                app:layout_constraintTop_toBottomOf="@id/cardTip3"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
 
-    <!-- Spinner di caricamento sovrapposto -->
+
     <ProgressBar
         android:id="@+id/loadingSpinner"
         style="?android:attr/progressBarStyleLarge"
@@ -113,7 +183,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Testo sotto al loader -->
     <TextView
         android:id="@+id/loadingText"
         android:layout_width="wrap_content"
