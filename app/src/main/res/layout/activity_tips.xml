@@ -8,6 +8,7 @@
     android:background="#ededed"
     tools:context=".TipsActivity">
 
+    <!-- Contenuto principale scrollabile -->
     <androidx.core.widget.NestedScrollView
         android:id="@+id/scrollContent"
         android:layout_width="0dp"
@@ -49,7 +50,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
 
-            <!-- Sezione consigli -->
+            <!-- Tip 1 -->
             <TextView
                 android:id="@+id/tip1Text"
                 android:layout_width="0dp"
@@ -61,6 +62,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
 
+            <!-- Tip 2 -->
             <TextView
                 android:id="@+id/tip2Text"
                 android:layout_width="0dp"
@@ -72,6 +74,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
 
+            <!-- Tip 3 -->
             <TextView
                 android:id="@+id/tip3Text"
                 android:layout_width="0dp"
@@ -97,4 +100,28 @@
                 app:layout_constraintEnd_toEndOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
+
+    <!-- Spinner di caricamento sovrapposto -->
+    <ProgressBar
+        android:id="@+id/loadingSpinner"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Testo sotto al loader -->
+    <TextView
+        android:id="@+id/loadingText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Caricamento consigli..."
+        android:textSize="16sp"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/loadingSpinner"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
