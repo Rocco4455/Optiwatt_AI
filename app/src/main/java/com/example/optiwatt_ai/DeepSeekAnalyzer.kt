@@ -142,9 +142,9 @@ object DeepSeekAnalyzer {
             val testo = "Testo OCR bolletta non richiesto, fornisci direttamente consigli."
 
             val campi = listOf(
-                "tip1" to "Fornisci un consiglio pratico per risparmiare energia.",
-                "tip2" to "Fornisci un secondo consiglio utile per risparmiare energia, basato su fonti online.",
-                "tip3" to "Fornisci un terzo consiglio efficace per ridurre il consumo energetico domestico."
+                "tip1" to "Fornisci un consiglio pratico per risparmiare energia in cucina, adatto a una famiglia media.",
+                "tip2" to "Suggerisci un comportamento o abitudine giornaliera per ridurre il consumo elettrico nel soggiorno o nella zona giorno.",
+                "tip3" to "Consiglia una modifica tecnologica o strumento utile per migliorare l’efficienza energetica domestica, come lampadine, termostati, o elettrodomestici smart."
             )
 
             val risultati = mutableMapOf<String, String>()
