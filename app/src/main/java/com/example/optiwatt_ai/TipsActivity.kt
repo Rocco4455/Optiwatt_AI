@@ -58,12 +58,6 @@ class TipsActivity : AppCompatActivity() {
         val tip2Text = findViewById<TextView>(R.id.tip2Text)
         val tip3Text = findViewById<TextView>(R.id.tip3Text)
         val previsioneText = findViewById<TextView>(R.id.previsioneText)
-        val loadingSpinner = findViewById<ProgressBar>(R.id.loadingSpinner)
-        val loadingText = findViewById<TextView>(R.id.loadingText)
-
-        // Mostra spinner e testo di caricamento
-        loadingSpinner.visibility = View.VISIBLE
-        loadingText.visibility = View.VISIBLE
 
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {
@@ -78,9 +72,6 @@ class TipsActivity : AppCompatActivity() {
                 previsioneText.text = "Prossima bolletta: ${it.previsioneConsumo} kWh, €${it.previsioneCosto}"
             }
 
-            // Nascondi caricamento
-            loadingSpinner.visibility = View.GONE
-            loadingText.visibility = View.GONE
         }
     }
 }
