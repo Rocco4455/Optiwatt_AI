@@ -16,16 +16,16 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class HomeActivity : AppCompatActivity() {
-
-    // Funzione per calcolare la media delle ultime 3 bollette
+    //Poichè è difficile da leggere e capire vi lascio dei commenti
     suspend fun calcolaMediaConsumoUltime3(dao: BollettaDao): Double {
-        val ultimeBolle = dao.prendiTutte().sortedByDescending { it.id }.take(3)
+        val ultimeBolle = dao.prendiTutte().sortedByDescending { it.id }.take(3) // Recupera tutte le bollette dal database, le ordina per id decrescente (le più recenti prima)
+        // Estrae il valore numerico del consumoTotale da ciascuna bolletta, pulendo il testo
         val valori = ultimeBolle.mapNotNull {
-            it.consumoTotale.replace(",", ".")
-                .replace(Regex("[^\\d.]"), "") // rimuove simboli, testo tipo "kWh"
-                .toDoubleOrNull()
+            it.consumoTotale.replace(",", ".")               // Converte la virgola in punto per i decimali
+                .replace(Regex("[^\\d.]"), "")              // rimuove simboli, testo tipo "kWh"
+                .toDoubleOrNull()                                              // Converte in Double, restituisce null se fallisce
         }
-        return if (valori.isNotEmpty()) valori.sum() / valori.size else 0.0
+        return if (valori.isNotEmpty()) valori.sum() / valori.size else 0.0    // Se ci sono almeno 1 o più valori validi, calcola la media. Altrimenti restituisce 0.0
     }
 
 
