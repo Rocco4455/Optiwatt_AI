@@ -148,8 +148,7 @@ object DeepSeekAnalyzer {
                         "Scrivi in modo chiaro e diretto, massimo 2 frasi.",
                 "tip2" to "Suggerisci una soluzione basata sulla sostituzione o ottimizzazione di dispositivi elettrici o sistemi domestici \n" +
                         "(es. caldaia, condizionatore, lampadine, prese smart, pannelli solari). \n" +
-                        "Indica uno strumento o tecnologia efficiente e diffusa nel 2024, con un linguaggio accessibile. \n" +
-                        "Fornisci solo il consiglio, senza spiegazioni lunghe.",
+                        "Indica uno strumento o tecnologia efficiente e diffusa nel 2024, con un linguaggio accessibile.",
                 "tip3" to "Consiglia una strategia di risparmio energetico che tenga conto di fasce orarie, tariffe multiorarie \n" +
                         "(o biorarie), e stagionalità. Il consiglio deve essere realistico e utile in Italia nel 2024, \n" +
                         "es. evitare l’uso della lavatrice in fascia F1. \n" +
