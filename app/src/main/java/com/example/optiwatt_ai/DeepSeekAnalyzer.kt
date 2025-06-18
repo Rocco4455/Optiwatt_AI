@@ -142,17 +142,9 @@ object DeepSeekAnalyzer {
             val testo = "Testo OCR bolletta non richiesto, fornisci direttamente consigli."
 
             val campi = listOf(
-                "tip1" to "Fornisci un consiglio dettagliato per ridurre i consumi energetici cambiando abitudini quotidiane \n" +
-                        "(domestiche o lavorative). Il consiglio deve essere pratico, attuabile da chiunque e basato su \n" +
-                        "comportamenti concreti, come uso di elettrodomestici, luci, riscaldamento, ecc.\n" +
-                        "Scrivi in modo chiaro e diretto, massimo 2 frasi.",
-                "tip2" to "Suggerisci una soluzione basata sulla sostituzione o ottimizzazione di dispositivi elettrici o sistemi domestici \n" +
-                        "(es. caldaia, condizionatore, lampadine, prese smart, pannelli solari). \n" +
-                        "Indica uno strumento o tecnologia efficiente e diffusa nel 2024, con un linguaggio accessibile.",
-                "tip3" to "Consiglia una strategia di risparmio energetico che tenga conto di fasce orarie, tariffe multiorarie \n" +
-                        "(o biorarie), e stagionalità. Il consiglio deve essere realistico e utile in Italia nel 2024, \n" +
-                        "es. evitare l’uso della lavatrice in fascia F1. \n" +
-                        "Limita la risposta a un solo consiglio concreto."
+                "tip1" to "Fornisci un consiglio dettagliato per ridurre i consumi energetici cambiando abitudini quotidiane (domestiche o lavorative). Massimo 2 frasi, senza numerazione.",
+                "tip2" to "Suggerisci una tecnologia efficiente per la casa nel 2024, adatta a ridurre i consumi elettrici. Massimo 2 frasi, senza numerazione.",
+                "tip3" to "Consiglia una strategia utile in Italia nel 2024 per risparmiare usando fasce orarie o tariffe. Una sola frase, senza numerazione."
             )
 
             val risultati = mutableMapOf<String, String>()
@@ -182,7 +174,7 @@ object DeepSeekAnalyzer {
                 $testo
 
                 $domanda
-                Rispondi con un solo valore nella prima riga. Nessuna spiegazione.
+                Rispondi in modo diretto, senza numerazione né spiegazioni.
             """.trimIndent()
 
             val json = """
@@ -213,10 +205,8 @@ object DeepSeekAnalyzer {
                         .getJSONObject(0)
                         .getJSONObject("message")
                         .getString("content")
+                        .replace("\n", " ")
                         .trim()
-                        .lines()
-                        .firstOrNull()
-                        ?.trim()
                 } else null
             } catch (e: Exception) {
                 e.printStackTrace()
