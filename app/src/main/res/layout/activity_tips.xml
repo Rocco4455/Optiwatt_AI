@@ -69,6 +69,8 @@
                     android:padding="16dp">
 
                     <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:text="Consiglio 1"
                         android:textStyle="bold"
                         android:textSize="16sp"
@@ -104,6 +106,8 @@
                     android:padding="16dp">
 
                     <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:text="Consiglio 2"
                         android:textStyle="bold"
                         android:textSize="16sp"
@@ -139,6 +143,8 @@
                     android:padding="16dp">
 
                     <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:text="Consiglio 3"
                         android:textStyle="bold"
                         android:textSize="16sp"
@@ -153,7 +159,6 @@
                         android:layout_marginTop="4dp" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
-
 
             <TextView
                 android:id="@+id/previsioneText"
