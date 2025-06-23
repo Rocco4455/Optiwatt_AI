@@ -45,6 +45,7 @@ object DeepSeekAnalyzer {
             }
         }
     }
+
     private fun eseguiTesseractOCR(context: Context, bitmap: Bitmap): String {
         val tess = TessBaseAPI()
         val tessDataPath = "${context.filesDir}/tesseract/"
