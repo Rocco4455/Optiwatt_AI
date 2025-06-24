@@ -94,4 +94,9 @@ Per info, partnership o suggerimenti:
 
 ---
 
+## Licenza
+
+Questo progetto è rilasciato con una licenza accademica e non può essere riutilizzato o distribuito senza autorizzazione. Vedi il file Licenza Accademica - Università degli Studi di Napoli Parthenope per maggiori dettagli.
+
+
 > _"W.A.T.T. – We Are Tomorrow’s Thinkers"_ 
