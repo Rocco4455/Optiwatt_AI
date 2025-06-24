@@ -79,7 +79,7 @@ Fornire uno strumento:
 ##  Autori e Contributori
 
 - 👤 [@VaccaMario](#)
-- 👤 [@NuccO4455](#)
+- 👤 [@Rocco4455](#)
 - 👤 [@Daddash](#)
 
 ---
@@ -94,4 +94,4 @@ Per info, partnership o suggerimenti:
 
 ---
 
-> _"W.A.T.T. – We Are Tomorrow’s Thinkers"_ ⚡
+> _"W.A.T.T. – We Are Tomorrow’s Thinkers"_ 
