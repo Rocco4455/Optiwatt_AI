@@ -91,6 +91,7 @@ Per info, partnership o suggerimenti:
  `mario.vacca002@studenti.uniparthenope.it`  
  `rocco.rizzitano001@studenti.uniparthenope.it`  
  `daniel.strino001@studenti.uniparthenope.it`
+ `https://optiwattai.my.canva.site/`
 
 ---
 
